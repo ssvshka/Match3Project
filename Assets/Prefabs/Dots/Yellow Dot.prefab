@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: -4756998970421544285}
   - component: {fileID: 4950285256087785665}
   m_Layer: 0
-  m_Name: Light Blue Dot
+  m_Name: Yellow Dot
   m_TagString: Light Blue Dot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -75,8 +75,8 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 76b961cea3ce44146a17709b7ea4fcb8, type: 3}
-  m_Color: {r: 0.3372549, g: 0.6862745, b: 0.9098039, a: 1}
+  m_Sprite: {fileID: 21300000, guid: 2200aae2933374c4bbdc7f889164833f, type: 3}
+  m_Color: {r: 0.8196079, g: 0.8196079, b: 0.8196079, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0

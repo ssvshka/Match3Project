@@ -8,6 +8,7 @@ public class CameraScaler : MonoBehaviour
     public float cameraOffset;
     public float aspectRatio = .625f;
     public float padding = 2;
+    public float yOffset = 1;
 
     private void Start()
     {
@@ -20,7 +21,7 @@ public class CameraScaler : MonoBehaviour
 
     private void RepositionCamera(float x, float y)
     {
-        transform.position = new Vector3(x / 2, y / 2, cameraOffset);
+        transform.position = new Vector3(x / 2, y / 2 + yOffset, cameraOffset);
         if (board.width >= board.height)
             Camera.main.orthographicSize = (board.width / 2 + padding) / aspectRatio;
         else

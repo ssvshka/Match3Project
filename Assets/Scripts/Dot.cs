@@ -257,6 +257,7 @@ public class Dot : MonoBehaviour
         isColorBomb = true;
         GameObject colorB = Instantiate(colorBomb, transform.position, Quaternion.identity);
         colorB.transform.parent = this.transform;
+        this.gameObject.tag = "Color";
     }
 
     public void MakeAdjacentBomb()

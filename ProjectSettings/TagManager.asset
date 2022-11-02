@@ -11,6 +11,7 @@ TagManager:
   - Pink Dot
   - Purple Dot
   - Red Dot
+  - Color
   layers:
   - Default
   - TransparentFX
