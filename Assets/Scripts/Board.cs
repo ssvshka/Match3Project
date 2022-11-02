@@ -42,6 +42,7 @@ public class Board : MonoBehaviour
     private FindMatches findMatches;
     private ScoreManager scoreManager;
     private SoundManager soundManager;
+    private GoalManager goalManager;
     public int basePieceValue = 20;
     private int streakValue = 1;
     public float refillDelay = .5f;
@@ -49,6 +50,7 @@ public class Board : MonoBehaviour
 
     private void Start()
     {
+        goalManager = FindObjectOfType<GoalManager>();
         soundManager = FindObjectOfType<SoundManager>();
         scoreManager = FindObjectOfType<ScoreManager>();
         findMatches = FindObjectOfType<FindMatches>();
@@ -226,6 +228,12 @@ public class Board : MonoBehaviour
                 breakableTiles[column, row].TakeDamage(1);
                 if (breakableTiles[column, row].hitPoints <= 0)
                     breakableTiles[column, row] = null;
+            }
+
+            if (goalManager != null)
+            {
+                goalManager.CompareGoal(allDots[column, row].tag.ToString());
+                goalManager.UpdateGoals();
             }
 
             if (soundManager != null)
