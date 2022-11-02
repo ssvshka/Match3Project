@@ -41,6 +41,7 @@ public class Board : MonoBehaviour
     public Dot currentDot;
     private FindMatches findMatches;
     private ScoreManager scoreManager;
+    private SoundManager soundManager;
     public int basePieceValue = 20;
     private int streakValue = 1;
     public float refillDelay = .5f;
@@ -48,6 +49,7 @@ public class Board : MonoBehaviour
 
     private void Start()
     {
+        soundManager = FindObjectOfType<SoundManager>();
         scoreManager = FindObjectOfType<ScoreManager>();
         findMatches = FindObjectOfType<FindMatches>();
         blankSpaces = new bool[width, height];
@@ -226,7 +228,8 @@ public class Board : MonoBehaviour
                     breakableTiles[column, row] = null;
             }
 
-
+            if (soundManager != null)
+                soundManager.PlayPopSound();
             GameObject particle = Instantiate(destroyEffect, allDots[column, row].transform.position, Quaternion.identity);
             Destroy(particle, .5f);
             Destroy(allDots[column, row]);
