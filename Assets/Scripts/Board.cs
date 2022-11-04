@@ -5,8 +5,7 @@ using UnityEngine;
 
 public enum GameState
 {
-    wait,
-    move
+    wait, move
 }
 
 public enum TileKind
@@ -29,24 +28,28 @@ public class Board : MonoBehaviour
     public GameState currentState = GameState.move;
     public int width;
     public int height;
-    public int offSet;
-    public GameObject tilePrefab;
-    public GameObject breakableTilePrefab;
-    public GameObject[] dots;
-    public GameObject destroyEffect;
-    public TileType[] boardLayout;
-    private bool[,] blankSpaces;
-    private BackgroundTile[,] breakableTiles;
     public GameObject[,] allDots;
     public Dot currentDot;
+    public int[] scoreGoals;
+
+    [SerializeField] private int offSet;
+    [SerializeField] private GameObject tilePrefab;
+    [SerializeField] private GameObject breakableTilePrefab;
+    [SerializeField] private GameObject[] dotsColor;
+    [SerializeField] private GameObject destroyEffect;
+    [SerializeField] private TileType[] boardLayout;
+    [SerializeField] private float refillDelay = .5f;
+    [SerializeField] private int basePieceValue = 20;
+    
+    private bool[,] blankSpaces;
+    private Jelly[,] breakableTiles;
+    
+    private int streakValue = 1;
+    
     private FindMatches findMatches;
     private ScoreManager scoreManager;
     private SoundManager soundManager;
     private GoalManager goalManager;
-    public int basePieceValue = 20;
-    private int streakValue = 1;
-    public float refillDelay = .5f;
-    public int[] scoreGoals;
 
     private void Start()
     {
@@ -56,11 +59,11 @@ public class Board : MonoBehaviour
         findMatches = FindObjectOfType<FindMatches>();
         blankSpaces = new bool[width, height];
         allDots = new GameObject[width, height];
-        breakableTiles = new BackgroundTile[width, height];
+        breakableTiles = new Jelly[width, height];
         SetUp();
     }
 
-    public void GenerateBlankSpaces()
+    private void GenerateBlankSpaces()
     {
         for (int i = 0; i < boardLayout.Length; i++)
         {
@@ -69,14 +72,14 @@ public class Board : MonoBehaviour
         }
     }
 
-    public void GenerateBreakableTiles()
+    private void GenerateBreakableTiles()
     {
         for (int i = 0; i < boardLayout.Length; i++)
             if (boardLayout[i].tileKind == TileKind.Breakable)
             {
                 var tempPosition = new Vector2(boardLayout[i].x, boardLayout[i].y);
                 GameObject tile = Instantiate(breakableTilePrefab, tempPosition, Quaternion.identity);
-                breakableTiles[boardLayout[i].x, boardLayout[i].y] = tile.GetComponent<BackgroundTile>();
+                breakableTiles[boardLayout[i].x, boardLayout[i].y] = tile.GetComponent<Jelly>();
             }
     }
 
@@ -94,17 +97,17 @@ public class Board : MonoBehaviour
                     GameObject backgroundTile = Instantiate(tilePrefab, tilePosition, Quaternion.identity) as GameObject;
                     backgroundTile.transform.parent = this.transform;
                     backgroundTile.name = $"({i}, {j})";
-                    int dotToUse = Random.Range(0, dots.Length);
+                    int dotToUse = Random.Range(0, dotsColor.Length);
 
                     int maxIterations = 0;
-                    while (MatchesAt(i, j, dots[dotToUse]) && maxIterations < 100)
+                    while (MatchesAt(i, j, dotsColor[dotToUse]) && maxIterations < 100)
                     {
-                        dotToUse = Random.Range(0, dots.Length);
+                        dotToUse = Random.Range(0, dotsColor.Length);
                         maxIterations++;
                     }
                     maxIterations = 0;
 
-                    GameObject dot = Instantiate(dots[dotToUse], tempPosition, Quaternion.identity);
+                    GameObject dot = Instantiate(dotsColor[dotToUse], tempPosition, Quaternion.identity);
                     dot.GetComponent<Dot>().row = j;
                     dot.GetComponent<Dot>().column = i;
                     dot.transform.parent = this.transform;
@@ -210,9 +213,6 @@ public class Board : MonoBehaviour
                             }
                         }
             }
-
-
-
     }
 
     private void DestroyMatchesAt(int column, int row)
@@ -253,10 +253,10 @@ public class Board : MonoBehaviour
                 if (allDots[i, j] != null)
                     DestroyMatchesAt(i, j);
         findMatches.currentMatches.Clear();
-        StartCoroutine(DecreaseRowCo2());
+        StartCoroutine(DecreaseRowCo());
     }
 
-    private IEnumerator DecreaseRowCo2()
+    private IEnumerator DecreaseRowCo()
     {
         for (int i = 0; i < width; i++)
             for (int j = 0; j < height; j++)
@@ -272,27 +272,6 @@ public class Board : MonoBehaviour
         StartCoroutine(FillBoardCo());
     }
 
-    public IEnumerator DecreaseRowCo()
-    {
-        int nullCount = 0;
-        for (int i = 0; i < width; i++)
-        {
-            for (int j = 0; j < height; j++)
-            {
-                if (allDots[i, j] == null)
-                    nullCount++;
-                else if (nullCount > 0)
-                {
-                    allDots[i, j].GetComponent<Dot>().row -= nullCount;
-                    allDots[i, j] = null;
-                }
-            }
-            nullCount = 0;
-        }
-        yield return new WaitForSeconds(refillDelay * .5f);
-        StartCoroutine(FillBoardCo());
-    }
-
     private void RefillBoard()
     {
         for (int i = 0; i < width; i++)
@@ -300,15 +279,15 @@ public class Board : MonoBehaviour
                 if (allDots[i, j] == null && !blankSpaces[i, j])
                 {
                     Vector2 tempPosition = new Vector2(i, j + offSet);
-                    int dotToUse = Random.Range(0, dots.Length);
+                    int dotToUse = Random.Range(0, dotsColor.Length);
                     int maxIterations = 0;
-                    while (MatchesAt(i, j, dots[dotToUse]) && maxIterations < 100)
+                    while (MatchesAt(i, j, dotsColor[dotToUse]) && maxIterations < 100)
                     {
                         maxIterations++;
-                        dotToUse = Random.Range(0, dots.Length);
+                        dotToUse = Random.Range(0, dotsColor.Length);
                     }
                     maxIterations = 0;
-                    GameObject piece = Instantiate(dots[dotToUse], tempPosition, Quaternion.identity);
+                    GameObject piece = Instantiate(dotsColor[dotToUse], tempPosition, Quaternion.identity);
                     allDots[i, j] = piece;
                     piece.GetComponent<Dot>().row = j;
                     piece.GetComponent<Dot>().column = i;

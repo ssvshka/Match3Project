@@ -42,16 +42,9 @@ public class Dot : MonoBehaviour
         isColorBomb = false;
         isAdjacentBomb = false;
         board = FindObjectOfType<Board>();
-        findMatches = FindObjectOfType<FindMatches>();
-        //targetX = (int)transform.position.x;
-        //targetY = (int)transform.position.y;
-        //row = targetY;
-        //column = targetX;
-        //previousRow = row;
-        //previousCol = column;        
+        findMatches = FindObjectOfType<FindMatches>();       
     }
 
-    //This is for testing and debug only
     private void OnMouseOver()
     {
         if (Input.GetMouseButtonDown(1))
@@ -64,11 +57,6 @@ public class Dot : MonoBehaviour
 
     private void Update()
     {
-        //if (isMatched)
-        //{
-        //    SpriteRenderer mySprite = GetComponent<SpriteRenderer>();
-        //    mySprite.color = new Color(1f, 1f, 1f, .2f);
-        //}
         targetX = column;
         targetY = row;
         if (Mathf.Abs(targetX - transform.position.x) > .1)
@@ -130,8 +118,6 @@ public class Dot : MonoBehaviour
             }
             else
                 board.DestroyMatches();            
-            
-            //otherDot = null;
         }       
     }
 
