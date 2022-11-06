@@ -12,9 +12,12 @@ public class PlayerControls : MonoBehaviour
 
     private bool isLowerPosition;
     private Vector2 moveValue = Vector2.zero;
-    private PlayerInputActions playerControls;
+    public PlayerInputActions playerControls;
     private InputAction moveNose;
     private InputAction fire;
+
+    public delegate void ClickAction();
+    public static event ClickAction OnSpacePressed;
 
     private void Awake()
     {
@@ -37,6 +40,7 @@ public class PlayerControls : MonoBehaviour
         fire.Disable();
     }
 
+    #region
     private void Move(InputAction.CallbackContext value)
     {
         moveValue = value.ReadValue<Vector2>();
@@ -92,12 +96,13 @@ public class PlayerControls : MonoBehaviour
                 isLowerPosition = true;
             }
     }
-
+#endregion
     private void DeactivateNose(GameObject nose) => nose.SetActive(false);
 
     private void Fire(InputAction.CallbackContext value)
     {
-        Debug.Log("fire");
+        if (value.performed)
+            OnSpacePressed();
     }
         //private void ActivateNose(bool isLower, Vector2 vector, GameObject nose)
         //{

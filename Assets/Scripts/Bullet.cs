@@ -4,5 +4,17 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 public class Bullet : MonoBehaviour
 {
-    
+    [SerializeField] private float forceMultiplier;
+    private Rigidbody rb;
+
+    private void OnTriggerEnter(Collider other)
+    {
+        Destroy(gameObject);
+    }
+
+    private void Awake()
+    {
+        rb = GetComponent<Rigidbody>();
+        rb.velocity = Time.deltaTime * forceMultiplier * transform.up;
+    }
 }

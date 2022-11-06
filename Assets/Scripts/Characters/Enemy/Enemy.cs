@@ -12,6 +12,12 @@ public class Enemy : MonoBehaviour
     {
         FirstSpawn = Random.Range(3, 7);
     }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        Destroy(gameObject);
+    }
+
     private void Start()
     {
         if (transform.parent.name == "RightEnemySpawner")
