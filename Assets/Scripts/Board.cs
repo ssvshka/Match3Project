@@ -294,7 +294,7 @@ public class Board : MonoBehaviour
                 }
     }
 
-    private bool MatchesOnBoard()
+    private bool AreMatchesOnBoard()
     {
         for (int i = 0; i < width; i++)
             for (int j = 0; j < height; j++)
@@ -308,7 +308,7 @@ public class Board : MonoBehaviour
     {
         RefillBoard();
         yield return new WaitForSeconds(refillDelay);
-        while (MatchesOnBoard())
+        while (AreMatchesOnBoard())
         {
             streakValue ++;
             DestroyMatches();
