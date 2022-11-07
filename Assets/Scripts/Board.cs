@@ -26,11 +26,12 @@ public class TileType
 public class Board : MonoBehaviour
 {
     public GameState currentState = GameState.move;
-    public int width;
-    public int height;
-    public GameObject[,] allDots;
-    public Dot currentDot;
-    public int[] scoreGoals;
+    [SerializeField] public int Width;
+    [SerializeField] public int Height;
+    
+    public GameObject[,] AllDots { get; set; }
+    public Dot CurrentDot { get; set; }
+    public int[] ScoreGoals;
 
     [SerializeField] private int offSet;
     [SerializeField] private GameObject tilePrefab;
@@ -57,10 +58,44 @@ public class Board : MonoBehaviour
         soundManager = FindObjectOfType<SoundManager>();
         scoreManager = FindObjectOfType<ScoreManager>();
         findMatches = FindObjectOfType<FindMatches>();
-        blankSpaces = new bool[width, height];
-        allDots = new GameObject[width, height];
-        breakableTiles = new Jelly[width, height];
+        blankSpaces = new bool[Width, Height];
+        AllDots = new GameObject[Width, Height];
+        breakableTiles = new Jelly[Width, Height];
         SetUp();
+    }
+
+    private void SetUp()
+    {
+        GenerateBlankSpaces();
+        GenerateBreakableTiles();
+        for (int i = 0; i < Width; i++)
+            for (int j = 0; j < Height; j++)
+            {
+                if (!blankSpaces[i, j])
+                {
+                    Vector2 tempPosition = new Vector2(i, j + offSet);
+                    Vector2 tilePosition = new Vector2(i, j);
+                    GameObject backgroundTile = Instantiate(tilePrefab, tilePosition, Quaternion.identity) as GameObject;
+                    backgroundTile.transform.parent = this.transform;
+                    backgroundTile.name = $"({i}, {j})";
+                    int dotToUse = Random.Range(0, dotsColor.Length);
+
+                    int maxIterations = 0;
+                    while (MatchesAt(i, j, dotsColor[dotToUse]) && maxIterations < 100)
+                    {
+                        dotToUse = Random.Range(0, dotsColor.Length);
+                        maxIterations++;
+                    }
+                    maxIterations = 0;
+
+                    GameObject dot = Instantiate(dotsColor[dotToUse], tempPosition, Quaternion.identity);
+                    dot.GetComponent<Dot>().Row = j;
+                    dot.GetComponent<Dot>().Column = i;
+                    dot.transform.parent = this.transform;
+                    dot.name = $"({i}, {j})";
+                    AllDots[i, j] = dot;
+                }
+            }
     }
 
     private void GenerateBlankSpaces()
@@ -83,61 +118,27 @@ public class Board : MonoBehaviour
             }
     }
 
-    private void SetUp()
-    {
-        GenerateBlankSpaces();
-        GenerateBreakableTiles();
-        for (int i = 0; i < width; i++)
-            for (int j = 0; j < height; j++)
-            {
-                if (!blankSpaces[i, j])
-                {
-                    Vector2 tempPosition = new Vector2(i, j + offSet);
-                    Vector2 tilePosition = new Vector2(i, j);
-                    GameObject backgroundTile = Instantiate(tilePrefab, tilePosition, Quaternion.identity) as GameObject;
-                    backgroundTile.transform.parent = this.transform;
-                    backgroundTile.name = $"({i}, {j})";
-                    int dotToUse = Random.Range(0, dotsColor.Length);
-
-                    int maxIterations = 0;
-                    while (MatchesAt(i, j, dotsColor[dotToUse]) && maxIterations < 100)
-                    {
-                        dotToUse = Random.Range(0, dotsColor.Length);
-                        maxIterations++;
-                    }
-                    maxIterations = 0;
-
-                    GameObject dot = Instantiate(dotsColor[dotToUse], tempPosition, Quaternion.identity);
-                    dot.GetComponent<Dot>().row = j;
-                    dot.GetComponent<Dot>().column = i;
-                    dot.transform.parent = this.transform;
-                    dot.name = $"({i}, {j})";
-                    allDots[i, j] = dot;
-                }
-            }
-    }
-
     private bool MatchesAt(int column, int row, GameObject piece)
     {
         if (column > 1 && row > 1)
         {
-            if (allDots[column - 1, row] != null && allDots[column - 2, row] != null)
-                if (allDots[column - 1, row].tag == piece.tag && allDots[column - 2, row].tag == piece.tag)
+            if (AllDots[column - 1, row] != null && AllDots[column - 2, row] != null)
+                if (AllDots[column - 1, row].tag == piece.tag && AllDots[column - 2, row].tag == piece.tag)
                     return true;
 
-            if (allDots[column, row - 1] != null && allDots[column, row - 2] != null)
-                if (allDots[column, row - 1].tag == piece.tag && allDots[column, row - 2].tag == piece.tag)
+            if (AllDots[column, row - 1] != null && AllDots[column, row - 2] != null)
+                if (AllDots[column, row - 1].tag == piece.tag && AllDots[column, row - 2].tag == piece.tag)
                     return true;
         }
         else if (column <= 1 || row <= 1)
         {
             if (row > 1)
-                if (allDots[column, row - 1] != null && allDots[column, row - 2] != null)
-                    if (allDots[column, row - 1].tag == piece.tag && allDots[column, row - 2].tag == piece.tag)
+                if (AllDots[column, row - 1] != null && AllDots[column, row - 2] != null)
+                    if (AllDots[column, row - 1].tag == piece.tag && AllDots[column, row - 2].tag == piece.tag)
                         return true;
             if (column > 1)
-                if (allDots[column - 1, row] != null && allDots[column - 2, row] != null)
-                    if (allDots[column - 1, row].tag == piece.tag && allDots[column - 2, row].tag == piece.tag)
+                if (AllDots[column - 1, row] != null && AllDots[column - 2, row] != null)
+                    if (AllDots[column - 1, row].tag == piece.tag && AllDots[column - 2, row].tag == piece.tag)
                         return true;
         }
         return false;
@@ -147,14 +148,14 @@ public class Board : MonoBehaviour
     {
         int numberHorizontal = 0;
         int numberVertical = 0;
-        Dot firstPiece = findMatches.currentMatches[0].GetComponent<Dot>();
+        Dot firstPiece = findMatches.CurrentMatches[0].GetComponent<Dot>();
         if (firstPiece != null)
-            foreach (var currentPiece in findMatches.currentMatches)
+            foreach (var currentPiece in findMatches.CurrentMatches)
             {
                 Dot dot = currentPiece.GetComponent<Dot>();
-                if (dot.row == firstPiece.row)
+                if (dot.Row == firstPiece.Row)
                     numberHorizontal++;
-                if (dot.column == firstPiece.column)
+                if (dot.Column == firstPiece.Column)
                     numberVertical++;
             }
         return (numberVertical == 5 || numberHorizontal == 5);
@@ -162,29 +163,29 @@ public class Board : MonoBehaviour
 
     private void CheckToMakeBombs()
     {
-        if (findMatches.currentMatches.Count == 4 || findMatches.currentMatches.Count == 7)
+        if (findMatches.CurrentMatches.Count == 4 || findMatches.CurrentMatches.Count == 7)
             findMatches.CheckBombs();
-        if (findMatches.currentMatches.Count == 5 || findMatches.currentMatches.Count == 8)
+        if (findMatches.CurrentMatches.Count == 5 || findMatches.CurrentMatches.Count == 8)
             if (ColumnOrRow())
             {
-                if (currentDot != null)
-                    if (currentDot.isMatched)
+                if (CurrentDot != null)
+                    if (CurrentDot.IsMatched)
                     {
-                        if (!currentDot.isColorBomb)
+                        if (!CurrentDot.IsColorBomb)
                         {
-                            currentDot.isMatched = false;
-                            currentDot.MakeColorBomb();
+                            CurrentDot.IsMatched = false;
+                            CurrentDot.MakeColorBomb();
                         }
                     }
                     else
                     {
-                        if (currentDot.otherDot != null)
+                        if (CurrentDot.OtherDot != null)
                         {
-                            Dot otherDot = currentDot.otherDot.GetComponent<Dot>();
-                            if (otherDot.isMatched)
-                                if (!otherDot.isColorBomb)
+                            Dot otherDot = CurrentDot.OtherDot.GetComponent<Dot>();
+                            if (otherDot.IsMatched)
+                                if (!otherDot.IsColorBomb)
                                 {
-                                    otherDot.isMatched = false;
+                                    otherDot.IsMatched = false;
                                     otherDot.MakeColorBomb();
                                 }
                         }
@@ -192,22 +193,22 @@ public class Board : MonoBehaviour
             }
             else
             {
-                if (currentDot != null)
-                    if (currentDot.isMatched)
-                        if (!currentDot.isAdjacentBomb)
+                if (CurrentDot != null)
+                    if (CurrentDot.IsMatched)
+                        if (!CurrentDot.IsAdjacentBomb)
                         {
-                            currentDot.isMatched = false;
-                            currentDot.MakeAdjacentBomb();
+                            CurrentDot.IsMatched = false;
+                            CurrentDot.MakeAdjacentBomb();
                         }
                         else
                         {
-                            if (currentDot.otherDot != null)
+                            if (CurrentDot.OtherDot != null)
                             {
-                                Dot otherDot = currentDot.otherDot.GetComponent<Dot>();
-                                if (otherDot.isMatched)
-                                    if (!otherDot.isAdjacentBomb)
+                                Dot otherDot = CurrentDot.OtherDot.GetComponent<Dot>();
+                                if (otherDot.IsMatched)
+                                    if (!otherDot.IsAdjacentBomb)
                                     {
-                                        otherDot.isMatched = false;
+                                        otherDot.IsMatched = false;
                                         otherDot.MakeAdjacentBomb();
                                     }
                             }
@@ -217,10 +218,10 @@ public class Board : MonoBehaviour
 
     private void DestroyMatchesAt(int column, int row)
     {
-        if (allDots[column, row].GetComponent<Dot>().isMatched)
+        if (AllDots[column, row].GetComponent<Dot>().IsMatched)
         {
             //How many elements are in the matched pieces list from findmatches?
-            if (findMatches.currentMatches.Count >= 4)
+            if (findMatches.CurrentMatches.Count >= 4)
                 CheckToMakeBombs();
 
             if (breakableTiles[column, row] != null)
@@ -232,40 +233,41 @@ public class Board : MonoBehaviour
 
             if (goalManager != null)
             {
-                goalManager.CompareGoal(allDots[column, row].tag.ToString());
+                goalManager.CompareGoal(AllDots[column, row].tag.ToString());
                 goalManager.UpdateGoals();
             }
 
             if (soundManager != null)
                 soundManager.PlayPopSound();
-            GameObject particle = Instantiate(destroyEffect, allDots[column, row].transform.position, Quaternion.identity);
+            
+            GameObject particle = Instantiate(destroyEffect, AllDots[column, row].transform.position, Quaternion.identity);
             Destroy(particle, .5f);
-            Destroy(allDots[column, row]);
+            Destroy(AllDots[column, row]);
             scoreManager.IncreaseScore(basePieceValue * streakValue);
-            allDots[column, row] = null;
+            AllDots[column, row] = null;
         }
     }
 
     public void DestroyMatches()
     {
-        for (int i = 0; i < width; i++)
-            for (int j = 0; j < height; j++)
-                if (allDots[i, j] != null)
+        for (int i = 0; i < Width; i++)
+            for (int j = 0; j < Height; j++)
+                if (AllDots[i, j] != null)
                     DestroyMatchesAt(i, j);
-        findMatches.currentMatches.Clear();
+        findMatches.CurrentMatches.Clear();
         StartCoroutine(DecreaseRowCo());
     }
 
     private IEnumerator DecreaseRowCo()
     {
-        for (int i = 0; i < width; i++)
-            for (int j = 0; j < height; j++)
-                if (!blankSpaces[i, j] && allDots[i, j] == null)
-                    for (int k = j + 1; k < height; k++)
-                        if (allDots[i, k] != null)
+        for (int i = 0; i < Width; i++)
+            for (int j = 0; j < Height; j++)
+                if (!blankSpaces[i, j] && AllDots[i, j] == null)
+                    for (int k = j + 1; k < Height; k++)
+                        if (AllDots[i, k] != null)
                         {
-                            allDots[i, k].GetComponent<Dot>().row = j;
-                            allDots[i, k] = null;
+                            AllDots[i, k].GetComponent<Dot>().Row = j;
+                            AllDots[i, k] = null;
                             break;
                         }
         yield return new WaitForSeconds(.4f);
@@ -274,9 +276,9 @@ public class Board : MonoBehaviour
 
     private void RefillBoard()
     {
-        for (int i = 0; i < width; i++)
-            for (int j = 0; j < height; j++)
-                if (allDots[i, j] == null && !blankSpaces[i, j])
+        for (int i = 0; i < Width; i++)
+            for (int j = 0; j < Height; j++)
+                if (AllDots[i, j] == null && !blankSpaces[i, j])
                 {
                     Vector2 tempPosition = new Vector2(i, j + offSet);
                     int dotToUse = Random.Range(0, dotsColor.Length);
@@ -288,18 +290,18 @@ public class Board : MonoBehaviour
                     }
                     maxIterations = 0;
                     GameObject piece = Instantiate(dotsColor[dotToUse], tempPosition, Quaternion.identity);
-                    allDots[i, j] = piece;
-                    piece.GetComponent<Dot>().row = j;
-                    piece.GetComponent<Dot>().column = i;
+                    AllDots[i, j] = piece;
+                    piece.GetComponent<Dot>().Row = j;
+                    piece.GetComponent<Dot>().Column = i;
                 }
     }
 
     private bool AreMatchesOnBoard()
     {
-        for (int i = 0; i < width; i++)
-            for (int j = 0; j < height; j++)
-                if (allDots[i, j] != null)
-                    if (allDots[i, j].GetComponent<Dot>().isMatched)
+        for (int i = 0; i < Width; i++)
+            for (int j = 0; j < Height; j++)
+                if (AllDots[i, j] != null)
+                    if (AllDots[i, j].GetComponent<Dot>().IsMatched)
                         return true;
         return false;
     }
@@ -310,12 +312,12 @@ public class Board : MonoBehaviour
         yield return new WaitForSeconds(refillDelay);
         while (AreMatchesOnBoard())
         {
-            streakValue ++;
+            streakValue++;
             DestroyMatches();
             yield return new WaitForSeconds(refillDelay * 2);
         }
-        findMatches.currentMatches.Clear();
-        currentDot = null;
+        findMatches.CurrentMatches.Clear();
+        CurrentDot = null;
 
         yield return new WaitForSeconds(refillDelay);
         currentState = GameState.move;

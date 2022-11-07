@@ -104,8 +104,5 @@ public class PlayerControls : MonoBehaviour
         if (value.performed)
             OnSpacePressed();
     }
-        //private void ActivateNose(bool isLower, Vector2 vector, GameObject nose)
-        //{
 
-        //}
-    }
+}

@@ -5,7 +5,9 @@ using UnityEngine.InputSystem;
 public class Bullet : MonoBehaviour
 {
     [SerializeField] private float forceMultiplier;
+    public Color BulletColor { get; set; }
     private Rigidbody rb;
+    
 
     private void OnTriggerEnter(Collider other)
     {

@@ -1143,10 +1143,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentState: 1
-  width: 7
-  height: 10
-  currentDot: {fileID: 0}
-  scoreGoals: d0070000a00f000088130000
+  Width: 7
+  Height: 10
+  ScoreGoals: 0000000000000000
   offSet: 10
   tilePrefab: {fileID: 2869658986620767750, guid: 376a0d1635ca1914a82de8b41fca55d4, type: 3}
   breakableTilePrefab: {fileID: 1817191065533418413, guid: 88b93024e2d9ce443a590ac891aba05f, type: 3}
@@ -1828,7 +1827,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c625342fb9b271541b7f1146bb007e33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentMatches: []
 --- !u!1 &1036022111
 GameObject:
   m_ObjectHideFlags: 0

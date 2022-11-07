@@ -22,8 +22,8 @@ public class ScoreManager : MonoBehaviour
         score += amountToIncrease;
         if (board != null && scoreBar != null)
         {
-            int length = board.scoreGoals.Length;
-            scoreBar.fillAmount = (float)score / (float) board.scoreGoals[length - 1];
+            int length = board.ScoreGoals.Length;
+            scoreBar.fillAmount = (float)score / (float) board.ScoreGoals[length - 1];
         }
     }
 }
