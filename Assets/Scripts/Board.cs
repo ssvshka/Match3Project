@@ -26,11 +26,11 @@ public class TileType
 public class Board : MonoBehaviour
 {
     public GameState currentState = GameState.move;
-    [SerializeField] public int Width;
-    [SerializeField] public int Height;
-    
+    public int Width;
+    public int Height;
+
     public GameObject[,] AllDots { get; set; }
-    public Dot CurrentDot { get; set; }
+    public Dot CurrentDot;
     public int[] ScoreGoals;
 
     [SerializeField] private int offSet;
@@ -46,7 +46,7 @@ public class Board : MonoBehaviour
     private Jelly[,] breakableTiles;
     
     private int streakValue = 1;
-    
+
     private FindMatches findMatches;
     private ScoreManager scoreManager;
     private SoundManager soundManager;
@@ -126,7 +126,7 @@ public class Board : MonoBehaviour
                 if (AllDots[column - 1, row].tag == piece.tag && AllDots[column - 2, row].tag == piece.tag)
                     return true;
 
-            if (AllDots[column, row - 1] != null && AllDots[column, row - 2] != null)
+                    if (AllDots[column, row - 1] != null && AllDots[column, row - 2] != null)
                 if (AllDots[column, row - 1].tag == piece.tag && AllDots[column, row - 2].tag == piece.tag)
                     return true;
         }
@@ -241,6 +241,7 @@ public class Board : MonoBehaviour
                 soundManager.PlayPopSound();
             
             GameObject particle = Instantiate(destroyEffect, AllDots[column, row].transform.position, Quaternion.identity);
+            
             Destroy(particle, .5f);
             Destroy(AllDots[column, row]);
             scoreManager.IncreaseScore(basePieceValue * streakValue);
@@ -254,6 +255,8 @@ public class Board : MonoBehaviour
             for (int j = 0; j < Height; j++)
                 if (AllDots[i, j] != null)
                     DestroyMatchesAt(i, j);
+        //var color = GetColor();
+        //Bullet.bulletClip.Add(color);
         findMatches.CurrentMatches.Clear();
         StartCoroutine(DecreaseRowCo());
     }

@@ -76,7 +76,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 2200aae2933374c4bbdc7f889164833f, type: 3}
-  m_Color: {r: 0.8196079, g: 0.8196079, b: 0.8196079, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -114,20 +114,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 12a860dab265cd2429d8f3dbd4e9a2cc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  column: 0
-  row: 0
-  previousCol: 0
-  previousRow: 0
-  targetX: 0
-  targetY: 0
-  isMatched: 0
-  otherDot: {fileID: 0}
-  swipeAngle: 0
-  swipeResist: 1
-  isColorBomb: 0
-  isColumnBomb: 0
-  isRowBomb: 0
-  isAdjacentBomb: 0
   adjacentBomb: {fileID: 8277084665919487184, guid: 0cbe9e7a17980e44c9bb85e2bf269f97, type: 3}
   rowArrow: {fileID: 6074580870123789368, guid: d2a964e41f4cb5245879d2ee5f35df97, type: 3}
   columnArrow: {fileID: 4280268517823173036, guid: c01041f73c532e647bd246924ef44916, type: 3}
