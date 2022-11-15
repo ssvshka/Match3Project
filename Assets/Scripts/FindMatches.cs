@@ -7,9 +7,8 @@ public class FindMatches : MonoBehaviour
 {
     private Board board;
     public List<GameObject> CurrentMatches;
-
-    //public delegate void OnMatchesFound();
-    //public static event OnMatchesFound Found;
+    public delegate void OnMatchesFoundDelegate();
+    public static event OnMatchesFoundDelegate OnMatchesFound;
 
     private void Start()
     {
@@ -79,30 +78,7 @@ public class FindMatches : MonoBehaviour
         if (!CurrentMatches.Contains(dot))
         {
             CurrentMatches.Add(dot);
-            var color = CurrentMatches[0].tag.Split(' ')[0];
-            switch (color)
-            {
-                case "Blue":
-                    Bullet.bulletClip.Enqueue(Color.blue);
-                    break;
-                case "Green":
-                    Bullet.bulletClip.Enqueue(Color.green);
-                    break;
-                case "Orange":
-                    Bullet.bulletClip.Enqueue(new Color(1.0f, 0.64f, 0.0f));
-                    break;
-                case "Purple":
-                    Bullet.bulletClip.Enqueue(Color.magenta);
-                    break;
-                case "Red":
-                    Bullet.bulletClip.Enqueue(Color.red);
-                    break;
-                case "Light":
-                    Bullet.bulletClip.Enqueue(Color.yellow);
-                    break;
-                default:
-                    break;
-            }
+            OnMatchesFound?.Invoke();
         }
         dot.GetComponent<Dot>().IsMatched = true;
     }

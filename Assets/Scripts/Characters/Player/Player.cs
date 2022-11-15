@@ -6,13 +6,14 @@ using UnityEngine.InputSystem;
 
 public class Player : MonoBehaviour
 {
-    [SerializeField] private int hitPoints;
+    public static int HitPoints { get; private set; } 
 
-    //public delegate void OnShooting();
-    //public static event OnShooting OnShoot;
-
+    private void Start()
+    {
+        HitPoints = 5;
+    }
     private void OnTriggerEnter(Collider other)
     {
-        hitPoints--;
+        HitPoints--;
     }
 }

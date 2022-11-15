@@ -5,17 +5,21 @@ using UnityEngine;
 public class Enemy : MonoBehaviour
 {
     [SerializeField] private float speed;
-    public static int FirstSpawn { get; private set; }
+    [SerializeField] private float slow = 0.7f;
+    public static int firstSpawn = 5;
     public int HitPoints { get; private set; }
-
-    private void Awake()
-    {
-        FirstSpawn = Random.Range(3, 7);
-    }
+    private bool isSlowed;
 
     private void OnTriggerEnter(Collider other)
     {
-        Destroy(gameObject);
+        if (GetComponent<SpriteRenderer>().color == other.GetComponent<SpriteRenderer>().color
+         || other.GetComponent<Player>() != null)
+            Destroy(gameObject);
+        else if (!isSlowed)
+        {
+            isSlowed = true;
+            speed *= slow;
+        }
     }
 
     private void Start()

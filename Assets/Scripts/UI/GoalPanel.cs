@@ -6,10 +6,10 @@ using UnityEngine.UI;
 
 public class GoalPanel : MonoBehaviour
 {
-    public TextMeshProUGUI text;
-    public Image image;
-    public Sprite sprite;
-    public string str;
+    public TextMeshProUGUI text { get; set; }
+    public Image image { get; set; }
+    public Sprite sprite { get; set; }
+    public string str { get; set; }
 
     private void Start()
     {
