@@ -231,11 +231,11 @@ public class Board : MonoBehaviour
                     breakableTiles[column, row] = null;
             }
 
-            if (goalManager != null)
-            {
-                goalManager.CompareGoal(AllDots[column, row].tag.ToString());
-                goalManager.UpdateGoals();
-            }
+            //if (goalManager != null)
+            //{
+            //    goalManager.CompareGoal(AllDots[column, row].tag.ToString());
+            //    goalManager.UpdateGoals();
+            //}
 
             if (soundManager != null)
                 soundManager.PlayPopSound();

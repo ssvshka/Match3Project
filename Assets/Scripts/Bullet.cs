@@ -19,7 +19,7 @@ public class Bullet : MonoBehaviour
         { Color.red, 0 },
         { Color.yellow, 0 },
     };
-    public static Queue<Color> bulletClip = new Queue<Color>();
+    public static Color[] bulletClip = new Color[] {Color.white};
 
     private FindMatches findMatches;
 
@@ -44,13 +44,7 @@ public class Bullet : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         sprite = GetComponent<SpriteRenderer>();
-        if (bulletClip.Count > 0)
-        {
-            sprite.color = bulletClip.First();
-            bulletClip.Dequeue();
-        }
-        else
-            sprite.color = Color.white;
+        sprite.color = bulletClip[0];
         
         rb.velocity = Time.deltaTime * forceMultiplier * transform.up;
     }
@@ -75,22 +69,22 @@ public class Bullet : MonoBehaviour
         switch (color)
         {
             case "Blue":
-                bulletClip.Enqueue(Color.blue);
+                bulletClip[0]=Color.blue;
                 break;
             case "Green":
-                bulletClip.Enqueue(Color.green);
+                bulletClip[0] = Color.green;
                 break;
             case "Orange":
-                bulletClip.Enqueue(new Color(1.0f, 0.3843138f, 0.0f));
+                bulletClip[0] = new Color(1.0f, 0.3843138f, 0.0f);
                 break;
             case "Purple":
-                bulletClip.Enqueue(Color.magenta);
+                bulletClip[0] = Color.magenta;
                 break;
             case "Red":
-                bulletClip.Enqueue(Color.red);
+                bulletClip[0] = Color.red;
                 break;
             case "Light":
-                bulletClip.Enqueue(Color.yellow);
+                bulletClip[0] = Color.yellow;
                 break;
             default:
                 break;

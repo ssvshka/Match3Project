@@ -18,7 +18,7 @@ public class GoalPanel : MonoBehaviour
 
     private void Setup()
     {
-        image.sprite = sprite;
+        //image.sprite = sprite;
         text.text = str;
     }
 }
